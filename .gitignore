@@ -3,6 +3,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+allure-results/
+allure-report/
+
+
+# ignoring screenshots
+src/test/resources/Allure_Failure_Screenshot/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -36,3 +43,4 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
