@@ -3,7 +3,8 @@ package com.feuji.utaf.base;
 import com.feuji.utaf.helpers.ReadPropertyFile;
 import com.feuji.utaf.helpers.browserFactory;
 import com.feuji.utaf.modules.webUI.pages.HomePage;
-import com.feuji.utaf.modules.webUI.pages.LoginPage;
+import com.feuji.utaf.modules.webUI.pages.LoginPage.LoginPageImpl;
+import com.feuji.utaf.modules.webUI.pages.LoginPage.LoginPage;
 import io.qameta.allure.Allure;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -20,7 +20,6 @@ import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Properties;
 
 public class uiBaseTest {
@@ -30,13 +29,14 @@ public class uiBaseTest {
     private final String propertiesFilePath = "properties/config.properties";
     private WebDriverWait wait;
     private static final Logger logger = LogManager.getLogger(uiBaseTest.class);
-    private LoginPage loginPage;
+    private LoginPageImpl loginPageImpl;
     private HomePage homePage;
 
 
     private String applicationUrl;
     private String appUserName;
     private String appUserPassword;
+    private LoginPage loginPage;
 
     @BeforeSuite
     public void envVariablesSetupBeforeTestExecution(){
@@ -54,14 +54,18 @@ public class uiBaseTest {
         browserFactory.browserSetUp();
         driver = browserFactory.getDriver();
 
-        loginPage = new LoginPage(driver);
+        loginPage = new LoginPageImpl(driver);
+
         homePage = new HomePage(driver);
         driver.navigate().to(applicationUrl);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(homePage.lumaLogoImage));
+        homePage.validateTheAppLogoVisibility();
         logger.info("Navigated to application successfully");
 
-        loginPage.logInToApplication(appUserName,appUserPassword);
+        loginPage.validateApplicationUrl();
+        loginPage.clickOnSignInButton();
+        loginPage.enterUserName(appUserName);
+        loginPage.enterPassword(appUserPassword);
+        loginPage.clickOnLoginButton();
         homePage.validateWelcomeTextAfterLogin();
 
     }
@@ -74,6 +78,9 @@ public class uiBaseTest {
             File screenshot =captureScreenshot(driver,result.getName());
             Allure.addAttachment("page screenshot",FileUtils.openInputStream(screenshot));
         }
+
+        loginPage.signOutFromApplication();
+
 
         if (driver!= null){
             driver.quit();
