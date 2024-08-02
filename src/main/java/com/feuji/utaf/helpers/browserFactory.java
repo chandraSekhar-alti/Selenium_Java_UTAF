@@ -17,11 +17,11 @@ import java.util.Properties;
 public class browserFactory {
 
     public WebDriver driver;
-    private final String propertiesFilePath = "properties/config.properties";
     private static final Logger logger = LogManager.getLogger(browserFactory.class);
 
     public void browserSetUp() {
 
+        String propertiesFilePath = "properties/config.properties";
         Properties properties = ReadPropertyFile.readProperties(propertiesFilePath);
         String browserName = properties.getProperty("browser");
         String runMode = properties.getProperty("runMode");
@@ -75,6 +75,7 @@ public class browserFactory {
     }
 
     public WebDriver getDriver() {
+        logger.info("Getting current driver...");
         return this.driver;
     }
 }

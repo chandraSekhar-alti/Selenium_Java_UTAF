@@ -2,11 +2,12 @@ package com.feuji.utaf.base;
 
 import com.feuji.utaf.helpers.ReadPropertyFile;
 import com.feuji.utaf.helpers.browserFactory;
+import com.feuji.utaf.modules.webUI.pages.HomePage;
+import com.feuji.utaf.modules.webUI.pages.LoginPage;
 import io.qameta.allure.Allure;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,21 +30,39 @@ public class uiBaseTest {
     private final String propertiesFilePath = "properties/config.properties";
     private WebDriverWait wait;
     private static final Logger logger = LogManager.getLogger(uiBaseTest.class);
+    private LoginPage loginPage;
+    private HomePage homePage;
+
+
+    private String applicationUrl;
+    private String appUserName;
+    private String appUserPassword;
+
+    @BeforeSuite
+    public void envVariablesSetupBeforeTestExecution(){
+        properties = ReadPropertyFile.readProperties(propertiesFilePath);
+        applicationUrl = properties.getProperty("appUrl");
+        appUserName = properties.getProperty("userEmail");
+        appUserPassword = properties.getProperty("userPassword");
+    }
 
     @BeforeMethod
     public void setUp(){
         logger.info("Running Global setup function before test case");
-        browserFactory = new browserFactory();
-        properties = ReadPropertyFile.readProperties(propertiesFilePath);
-        String applicationUrl = properties.getProperty("appUrl");
 
+        browserFactory = new browserFactory();
         browserFactory.browserSetUp();
         driver = browserFactory.getDriver();
 
+        loginPage = new LoginPage(driver);
+        homePage = new HomePage(driver);
         driver.navigate().to(applicationUrl);
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".logo > img")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(homePage.lumaLogoImage));
         logger.info("Navigated to application successfully");
+
+        loginPage.logInToApplication(appUserName,appUserPassword);
+        homePage.validateWelcomeTextAfterLogin();
 
     }
 
