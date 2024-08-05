@@ -41,14 +41,12 @@ public class HomePage {
         Assert.assertTrue(welcomeTextFromUi.startsWith("Welcome,"),"The Welcome Text doesn't start with Welcome");
     }
 
-    public void hoverOnMensSectionAndClickOnJacketTab() throws InterruptedException {
+    public void hoverOnMensSectionAndClickOnJacketTab() {
         Actions actions = new Actions(driver);
-
         actions.moveToElement(driver.findElement(mensTab)).perform();
         actions.moveToElement(driver.findElement(mensTopTab)).perform();
         actions.moveToElement(driver.findElement(mensJacketTab)).perform();
         driver.findElement(mensJacketTab).click();
-        Thread.sleep(10000);
     }
 
     public void validateTheAppLogoVisibility(){
@@ -57,6 +55,7 @@ public class HomePage {
     }
 
     public void clickOnSignOutButton(){
+        driver.findElement(lumaLogoImage).click();
         driver.findElement(logoutDropDownButton).isDisplayed();
         driver.findElement(logoutDropDownButton).click();
         driver.findElement(logoutButton).isDisplayed();

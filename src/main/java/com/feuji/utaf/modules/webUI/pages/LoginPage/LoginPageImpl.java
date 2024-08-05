@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
@@ -17,9 +18,7 @@ import java.util.Properties;
 public class LoginPageImpl implements LoginPage {
     private static final Logger logger = LogManager.getLogger(LoginPageImpl.class);
     public WebDriver driver;
-    private WebDriverWait wait;
     private HomePage homePage;
-    private final String propertiesFilePath = "properties/config.properties";
 
     public LoginPageImpl(WebDriver driver) {
         this.driver = driver;
@@ -39,9 +38,8 @@ public class LoginPageImpl implements LoginPage {
 
     @Override
     public void enterUserName(String userName) {
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        Wait <WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         wait.until(ExpectedConditions.visibilityOfElementLocated(userNameInputField));
-
         driver.findElement(userNameInputField).sendKeys(userName);
     }
 
@@ -65,10 +63,10 @@ public class LoginPageImpl implements LoginPage {
 
     @Override
     public void validateApplicationUrl(){
+        String propertiesFilePath = "properties/config.properties";
         Properties properties = ReadPropertyFile.readProperties(propertiesFilePath);
         String actualUrl = driver.getCurrentUrl();
         String expectedUrl = properties.getProperty("appUrl");
-        logger.error("expected URL : {}and actualUrl : {}", expectedUrl, actualUrl);
-        Assert.assertEquals(actualUrl,expectedUrl,"Url doesn't matched");
+        Assert.assertEquals(actualUrl,expectedUrl,"Url doesn't matched expected URL :"+expectedUrl+" actualUrl :"+expectedUrl);
     }
 }

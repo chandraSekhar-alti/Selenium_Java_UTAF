@@ -20,15 +20,16 @@ import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Properties;
 
-public class uiBaseTest {
+public class UiBaseTest {
     public static WebDriver driver;
     private browserFactory browserFactory;
     private Properties properties;
     private final String propertiesFilePath = "properties/config.properties";
     private WebDriverWait wait;
-    private static final Logger logger = LogManager.getLogger(uiBaseTest.class);
+    private static final Logger logger = LogManager.getLogger(UiBaseTest.class);
     private LoginPageImpl loginPageImpl;
     private HomePage homePage;
 
@@ -53,6 +54,7 @@ public class uiBaseTest {
         browserFactory = new browserFactory();
         browserFactory.browserSetUp();
         driver = browserFactory.getDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
 
         loginPage = new LoginPageImpl(driver);
 
@@ -83,7 +85,9 @@ public class uiBaseTest {
 
 
         if (driver!= null){
+            driver.close();
             driver.quit();
+            driver = null;
             logger.info("driver set to null successfully");
         }
     }
