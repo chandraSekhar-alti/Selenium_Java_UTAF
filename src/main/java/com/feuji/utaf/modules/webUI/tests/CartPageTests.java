@@ -9,6 +9,7 @@ import com.feuji.utaf.modules.webUI.pages.ProductPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,6 +18,7 @@ import java.io.FileNotFoundException;
 
 public class CartPageTests extends UiBaseTest {
 
+    private WebDriver driver;
     private HomePage homePage;
     private ProductPage productPage;
     private CartPage cartPage;
@@ -28,6 +30,7 @@ public class CartPageTests extends UiBaseTest {
 
     @Test(priority = 0)
     public void addingItemIntoCartTest() throws FileNotFoundException {
+        driver = getDriver();
         homePage = new HomePage(driver);
         productPage = new ProductPage(driver);
         cartPage = new CartPage(driver);
@@ -51,8 +54,10 @@ public class CartPageTests extends UiBaseTest {
 
     @Test(priority = 1)
     public void completeProcessOfPurchasingAnItem() {
+        driver = getDriver();
         homePage = new HomePage(driver);
         productPage = new ProductPage(driver);
+        cartPage = new CartPage(driver);
 
         homePage.hoverOnMensSectionAndClickOnJacketTab();
         productPage.clickOnProduct();

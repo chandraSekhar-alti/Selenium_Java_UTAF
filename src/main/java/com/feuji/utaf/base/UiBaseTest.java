@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -24,11 +25,11 @@ import java.time.Duration;
 import java.util.Properties;
 
 public class UiBaseTest {
-    public static WebDriver driver;
+    public WebDriver driver;
     private browserFactory browserFactory;
     private Properties properties;
     private final String propertiesFilePath = "properties/config.properties";
-    private WebDriverWait wait;
+    private Wait<WebDriverWait> wait;
     private static final Logger logger = LogManager.getLogger(UiBaseTest.class);
     private LoginPageImpl loginPageImpl;
     private HomePage homePage;
@@ -106,6 +107,11 @@ public class UiBaseTest {
             logger.error(e);
         }
         return src;
+    }
+
+    public WebDriver getDriver(){
+        System.out.println("Getting driver from the UI Base test case");
+        return this.driver;
     }
 
 }

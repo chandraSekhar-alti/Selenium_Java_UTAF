@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Regression">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg" />
+    </listeners>
+
+    <test name="CartPageTests">
+        <classes>
+            <class name="com.feuji.utaf.modules.webUI.tests.CartPageTests">
+                <methods>
+                    <include name="addingItemIntoCartTest"/>
+                    <include name="completeProcessOfPurchasingAnItem"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="WindowsAndTabsTests">
+        <classes>
+            <class name="com.feuji.utaf.modules.webUI.tests.WindowsAndTabsTests">
+                <methods>
+                    <include name="openNewTabAndNavigateToUrl"/>
+                    <include name="openMultipleTabsAndPerformActionOnDesiredTab"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

@@ -3,6 +3,7 @@ package com.feuji.utaf.modules.webUI.pages;
 import com.feuji.utaf.modules.webUI.pages.LoginPage.LoginPageImpl;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -27,6 +28,8 @@ public class HomePage {
     private final By mensJacketTab = By.xpath("//span[text()='Men']/ancestor::li/ul/descendant::span[text()='Tops']/ancestor::li/ul/li/a/span[text()='Jackets']");
     private final By logoutDropDownButton = By.xpath("//div[@class='panel header']/descendant::li[@class='customer-welcome']/span/button");
     private final By logoutButton = By.xpath("//div[@aria-hidden='false']/ul/li/a[normalize-space()='Sign Out']");
+    private final By practiceApiTestingUsingMangoFooterLink = By.xpath("//div[@class='footer content']/descendant::ul/li/a[text()='Practice API Testing using Magento 2']");
+
 
 
     public void clickOnSignInButton() {
@@ -55,11 +58,20 @@ public class HomePage {
     }
 
     public void clickOnSignOutButton(){
-        driver.findElement(lumaLogoImage).click();
+        if (driver.findElement(lumaLogoImage).isDisplayed()){
+            driver.findElement(lumaLogoImage).click();
+        }
         driver.findElement(logoutDropDownButton).isDisplayed();
         driver.findElement(logoutDropDownButton).click();
         driver.findElement(logoutButton).isDisplayed();
         driver.findElement(logoutButton).click();
+    }
+
+    public void clickOnPracticeApiTestingFooterText() {
+        Actions actions = new Actions(driver);
+        driver.findElement(practiceApiTestingUsingMangoFooterLink).isDisplayed();
+        actions.moveToElement(driver.findElement(practiceApiTestingUsingMangoFooterLink)).perform();
+
     }
 
 }
