@@ -27,39 +27,30 @@ import java.util.Properties;
 public class UiBaseTest {
     public WebDriver driver;
     private browserFactory browserFactory;
-    private Properties properties;
-    private final String propertiesFilePath = "properties/config.properties";
     private Wait<WebDriverWait> wait;
     private static final Logger logger = LogManager.getLogger(UiBaseTest.class);
     private LoginPageImpl loginPageImpl;
-    private HomePage homePage;
-
-
-    private String applicationUrl;
-    private String appUserName;
-    private String appUserPassword;
+    public boolean skipLogout = false;
     private LoginPage loginPage;
 
-    @BeforeSuite
-    public void envVariablesSetupBeforeTestExecution(){
-        properties = ReadPropertyFile.readProperties(propertiesFilePath);
-        applicationUrl = properties.getProperty("appUrl");
-        appUserName = properties.getProperty("userEmail");
-        appUserPassword = properties.getProperty("userPassword");
-    }
 
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
+        String propertiesFilePath = "properties/config.properties";
+        Properties properties = ReadPropertyFile.readProperties(propertiesFilePath);
+        String applicationUrl = properties.getProperty("appUrl");
+        String appUserName = properties.getProperty("userEmail");
+        String appUserPassword = properties.getProperty("userPassword");
+
         logger.info("Running Global setup function before test case");
 
         browserFactory = new browserFactory();
         browserFactory.browserSetUp();
         driver = browserFactory.getDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
-
         loginPage = new LoginPageImpl(driver);
+        HomePage homePage = new HomePage(driver);
 
-        homePage = new HomePage(driver);
         driver.navigate().to(applicationUrl);
         homePage.validateTheAppLogoVisibility();
         logger.info("Navigated to application successfully");
@@ -77,15 +68,16 @@ public class UiBaseTest {
     public void tearDown(ITestResult result) throws IOException {
         logger.info("Running tearDown function after test case");
 
-        if (result.getStatus() == ITestResult.FAILURE){
-            File screenshot =captureScreenshot(driver,result.getName());
-            Allure.addAttachment("page screenshot",FileUtils.openInputStream(screenshot));
+        if (result.getStatus() == ITestResult.FAILURE) {
+            File screenshot = captureScreenshot(driver, result.getName());
+            Allure.addAttachment("page screenshot", FileUtils.openInputStream(screenshot));
         }
 
-        loginPage.signOutFromApplication();
+        if (!skipLogout) {
+            loginPage.signOutFromApplication();
+        }
 
-
-        if (driver!= null){
+        if (driver != null) {
             driver.close();
             driver.quit();
             driver = null;
@@ -94,13 +86,13 @@ public class UiBaseTest {
     }
 
 
-    private static File captureScreenshot(WebDriver driver, String testName){
+    private static File captureScreenshot(WebDriver driver, String testName) {
         logger.info("Capturing the screenshot :: take screenshot");
         String screenshotPath = null;
         TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
         File src = takesScreenshot.getScreenshotAs(OutputType.FILE);
-        try{
-            screenshotPath = System.getProperty("user.dir") +"\\src\\test\\resources\\Allure_Failure_Screenshot\\" + testName +"_screenshot.png";
+        try {
+            screenshotPath = System.getProperty("user.dir") + "\\src\\test\\resources\\Allure_Failure_Screenshot\\" + testName + "_screenshot.png";
             logger.info("screenshot saved at :- {}", screenshotPath);
             FileUtils.copyFile(src, new File(screenshotPath));
         } catch (IOException e) {
@@ -109,7 +101,7 @@ public class UiBaseTest {
         return src;
     }
 
-    public WebDriver getDriver(){
+    public WebDriver getDriver() {
         System.out.println("Getting driver from the UI Base test case");
         return this.driver;
     }

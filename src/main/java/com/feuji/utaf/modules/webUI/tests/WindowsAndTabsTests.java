@@ -15,6 +15,7 @@ public class WindowsAndTabsTests extends UiBaseTest {
 
     @Test
     public void openNewTabAndNavigateToUrl()  {
+        skipLogout = true;
         driver = getDriver();
         homePage = new HomePage(driver);
         webUiUtils = new WebUiUtils();
@@ -29,6 +30,7 @@ public class WindowsAndTabsTests extends UiBaseTest {
         driver = webUiUtils.switchToNewTab(driver);
         driver.navigate().to("https://www.amazon.com");
         System.out.println("driver.getTitle() : "+driver.getTitle());
+
     }
 
     @Test
